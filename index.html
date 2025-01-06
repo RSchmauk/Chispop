@@ -9,23 +9,28 @@
             width: 100%;
             height: auto;
             max-width: 300px;
+            border: 2px solid #000;
             margin-bottom: 20px;
-        }
-        #qr-canvas {
-            display: none;
         }
     </style>
 </head>
 <body>
     <h1>Escanea tu código QR</h1>
-    <video id="preview"></video>
-    <canvas id="qr-canvas"></canvas>
+    <video id="preview" autoplay></video>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('preview');
-            const canvas = document.getElementById('qr-canvas');
-            const context = canvas.getContext('2d');
+
+            // Acceder a la cámara
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then((stream) => {
+                    video.srcObject = stream;
+                })
+                .catch((err) => {
+                    console.error('Error al acceder a la cámara: ', err);
+                });
+
             const html5QrCode = new Html5Qrcode("preview");
 
             function handleQRCode(decodedText) {
@@ -34,11 +39,6 @@
                 } else {
                     alert('Por favor, escanea un enlace válido de YouTube Music.');
                 }
-            }
-
-            function drawFrame() {
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                requestAnimationFrame(drawFrame);
             }
 
             html5QrCode.start(
@@ -51,15 +51,3 @@
                     handleQRCode(decodedText);
                 }
             ).catch(err => {
-                console.log(`Error: ${err}`);
-            });
-
-            video.addEventListener('loadedmetadata', () => {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                drawFrame();
-            });
-        });
-    </script>
-</body>
-</html>
