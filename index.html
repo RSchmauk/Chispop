@@ -9,23 +9,36 @@
             width: 100%;
             height: auto;
             max-width: 300px;
+            margin-bottom: 20px;
+        }
+        #qr-canvas {
+            display: none;
         }
     </style>
 </head>
 <body>
     <h1>Escanea tu código QR</h1>
     <video id="preview"></video>
+    <canvas id="qr-canvas"></canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('preview');
+            const canvas = document.getElementById('qr-canvas');
+            const context = canvas.getContext('2d');
             const html5QrCode = new Html5Qrcode("preview");
-            
+
             function handleQRCode(decodedText) {
                 if (decodedText.startsWith('https://music.youtube.com/watch')) {
                     window.location.href = decodedText;
                 } else {
                     alert('Por favor, escanea un enlace válido de YouTube Music.');
                 }
+            }
+
+            function drawFrame() {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(drawFrame);
             }
 
             html5QrCode.start(
@@ -39,6 +52,12 @@
                 }
             ).catch(err => {
                 console.log(`Error: ${err}`);
+            });
+
+            video.addEventListener('loadedmetadata', () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                drawFrame();
             });
         });
     </script>
