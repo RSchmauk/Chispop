@@ -3,26 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproductor de YouTube Music</title>
+    <title>Lector de QR para YouTube Music</title>
     <style>
-        #player {
-            display: none;
-        }
-        #controls {
-            margin-top: 20px;
+        #preview {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
         }
     </style>
 </head>
 <body>
-    <h1>Escanea tu QR para reproducir la canción</h1>
-    <video id="preview" style="width: 300px; height: 300px;"></video>
-    <div id="controls">
-        <button id="play">Reproducir</button>
-        <button id="pause">Pausar</button>
-    </div>
-    <iframe id="player" width="560" height="315"></iframe>
+    <h1>Escanea tu código QR</h1>
+    <video id="preview"></video>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script>
+        const html5QrCode = new Html5Qrcode("preview");
+        
+        function handleQRCode(decodedText) {
+            if (decodedText.startsWith('https://music.youtube.com/watch')) {
+                window.location.href = decodedText;
+            } else {
+                alert('Por favor, escanea un enlace válido de YouTube Music.');
+            }
+        }
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qr-scanner/1.4.1/qr-scanner.umd.min.js"></script>
-    <script src="script.js"></script>
+        html5QrCode.start(
+            { facingMode: "environment" }, 
+            {
+                fps: 10, 
+                qrbox: { width: 250, height: 250 }
+            },
+            (decodedText, decodedResult) => {
+                handleQRCode(decodedText);
+            }
+        ).catch(err => {
+            console.log(`Error: ${err}`);
+        });
+    </script>
 </body>
 </html>
