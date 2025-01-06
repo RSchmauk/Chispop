@@ -15,29 +15,31 @@
 <body>
     <h1>Escanea tu código QR</h1>
     <video id="preview"></video>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script>
-        const html5QrCode = new Html5Qrcode("preview");
-        
-        function handleQRCode(decodedText) {
-            if (decodedText.startsWith('https://music.youtube.com/watch')) {
-                window.location.href = decodedText;
-            } else {
-                alert('Por favor, escanea un enlace válido de YouTube Music.');
+        document.addEventListener('DOMContentLoaded', () => {
+            const html5QrCode = new Html5Qrcode("preview");
+            
+            function handleQRCode(decodedText) {
+                if (decodedText.startsWith('https://music.youtube.com/watch')) {
+                    window.location.href = decodedText;
+                } else {
+                    alert('Por favor, escanea un enlace válido de YouTube Music.');
+                }
             }
-        }
 
-        html5QrCode.start(
-            { facingMode: "environment" }, 
-            {
-                fps: 10, 
-                qrbox: { width: 250, height: 250 }
-            },
-            (decodedText, decodedResult) => {
-                handleQRCode(decodedText);
-            }
-        ).catch(err => {
-            console.log(`Error: ${err}`);
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                {
+                    fps: 10, 
+                    qrbox: { width: 250, height: 250 }
+                },
+                (decodedText, decodedResult) => {
+                    handleQRCode(decodedText);
+                }
+            ).catch(err => {
+                console.log(`Error: ${err}`);
+            });
         });
     </script>
 </body>
